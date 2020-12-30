@@ -1,0 +1,29 @@
+{
+    "name": "jigius/acc-core-log",
+    "description": "Implements an ordinary log",
+    "type": "lib",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "jigius",
+            "email": "jigius@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.4.0",
+        "jigius/acc-core": "dev-master",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Acc\\Core\\Log\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:jigius/acc-core.git"
+        }
+    ]
+}

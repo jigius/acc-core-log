@@ -174,16 +174,18 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
         if (empty($this->i['pathname'])) {
             throw new LogicException("`pathname` is not defined");
         }
-        $folder = dirname($this->i['pathname']);
-        if (!empty($folder) && !is_dir($folder)) {
-            if (@mkdir($folder, 0755, true) === false) {
-                throw new RuntimeException(
-                    sprintf(
-                        "couldn't create folder=`%s`: %s",
-                        $folder,
-                        error_get_last()['message'] ?? "null"
-                    )
-                );
+        if (strncmp($this->i['pathname'], "php://", 6) !== 0) {
+            $folder = dirname($this->i['pathname']);
+            if (!empty($folder) && !is_dir($folder)) {
+                if (@mkdir($folder, 0755, true) === false) {
+                    throw new RuntimeException(
+                        sprintf(
+                            "couldn't create folder=`%s`: %s",
+                            $folder,
+                            error_get_last()['message'] ?? "null"
+                        )
+                    );
+                }
             }
         }
         $fd = @fopen($this->i['pathname'], $this->i['mode']);

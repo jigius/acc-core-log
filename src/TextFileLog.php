@@ -244,7 +244,7 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
     /**
      * @inheritDoc
      */
-    public function withMinLevel(LogLevel $level): self
+    public function withMinLevel(LogLevelInterface $level): self
     {
         $obj = $this->blueprinted();
         $obj->minLevel = $level;

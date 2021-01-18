@@ -65,7 +65,7 @@ final class NullLog implements LogInterface, SerializableInterface
     /**
      * @inheritDoc
      */
-    public function withMinLevel(LogLevel $level): self
+    public function withMinLevel(LogLevelInterface $level): self
     {
         return $this;
     }

@@ -13,11 +13,14 @@ declare(strict_types=1);
 
 namespace Acc\Core\Log;
 
+use Acc\Core\AttributableInterface;
+
 /**
  * Interface LogEntryInterface
+ *
  * @package Acc\Core\Log
  */
-interface LogEntryInterface
+interface LogEntryInterface extends AttributableInterface
 {
     /**
      * Defines entry's level

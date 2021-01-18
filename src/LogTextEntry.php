@@ -13,6 +13,9 @@ declare(strict_types=1);
 
 namespace Acc\Core\Log;
 
+use Acc\Core\AttributableInterface;
+use Acc\Core\Registry\RegistryInterface;
+use Acc\Core\Registry\Vanilla\Registry;
 use Acc\Core\SerializableInterface;
 use DateTime;
 use DateTimeInterface;
@@ -41,9 +44,10 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
     /**
      * LogTextEntry constructor.
      */
-    public function __construct()
+    public function __construct(?RegistryInterface $attrs = null)
     {
         $this->level = new LogLevel(LogLevelInterface::INFO);
+        $this->attrs = new Registry();
     }
 
     /**
@@ -113,6 +117,17 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
         $obj->text = $data['text'];
         $obj->level = new LogLevel($data['level']);
         return $obj;
+    }
+
+    public function withAttr(string $name, $val): AttributableInterface
+    {
+        $obj = $this->blueprinted();
+        $obj->attrs = $this->attrs->
+    }
+
+    public function attrs(): RegistryInterface
+    {
+        // TODO: Implement attrs() method.
     }
 
     /**

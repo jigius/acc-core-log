@@ -13,6 +13,8 @@ declare(strict_types=1);
 
 namespace Acc\Core\Log;
 
+use Acc\Core\Registry\RegistryInterface;
+use Acc\Core\Registry\Vanilla\Registry;
 use Acc\Core\SerializableInterface;
 use DateTime;
 use DateTimeInterface;
@@ -35,6 +37,11 @@ final class LogArrayEntry implements LogArrayEntryInterface, SerializableInterfa
      * @var string|null
      */
     private ?string $text = null;
+    /**
+     * Assigned attributes to the instance
+     * @var Registry
+     */
+    private Registry $attrs;
 
     /**
      * @var DateTimeInterface|null
@@ -43,10 +50,31 @@ final class LogArrayEntry implements LogArrayEntryInterface, SerializableInterfa
 
     /**
      * LogArrayEntry constructor.
+     *
+     * @param RegistryInterface|null $attrs
      */
-    public function __construct()
+    public function __construct(?RegistryInterface $attrs = null)
     {
         $this->level = new LogLevel(LogLevelInterface::INFO);
+        $this->attrs = $attrs ?? new Registry();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function withAttr(string $name, $val): self
+    {
+        $obj = $this->blueprinted();
+        $obj->attrs = $this->attrs->updated($name, $val);
+        return $obj;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attrs(): RegistryInterface
+    {
+        return $this->attrs();
     }
 
     /**

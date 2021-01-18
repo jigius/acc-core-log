@@ -34,8 +34,8 @@ interface LogInterface
 
     /**
      * Defines a level below that entries will be filtering out
-     * @param LogLevel $level
+     * @param LogLevelInterface $level
      * @return LogInterface
      */
-    public function withMinLevel(LogLevel $level): LogInterface;
+    public function withMinLevel(LogLevelInterface $level): LogInterface;
 }

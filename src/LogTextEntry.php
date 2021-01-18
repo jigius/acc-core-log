@@ -13,7 +13,6 @@ declare(strict_types=1);
 
 namespace Acc\Core\Log;
 
-use Acc\Core\AttributableInterface;
 use Acc\Core\Registry\RegistryInterface;
 use Acc\Core\Registry\Vanilla\Registry;
 use Acc\Core\SerializableInterface;
@@ -40,14 +39,21 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
      * @var DateTimeInterface|null
      */
     private ?DateTimeInterface $dt = null;
+    /**
+     * Assigned attributes to the instance
+     * @var Registry
+     */
+    private Registry $attrs;
 
     /**
      * LogTextEntry constructor.
+     *
+     * @param RegistryInterface|null $attrs
      */
     public function __construct(?RegistryInterface $attrs = null)
     {
         $this->level = new LogLevel(LogLevelInterface::INFO);
-        $this->attrs = new Registry();
+        $this->attrs = $attrs ?? new Registry();
     }
 
     /**
@@ -119,15 +125,22 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
         return $obj;
     }
 
-    public function withAttr(string $name, $val): AttributableInterface
+    /**
+     * @inheritdoc
+     */
+    public function withAttr(string $name, $val): self
     {
         $obj = $this->blueprinted();
-        $obj->attrs = $this->attrs->
+        $obj->attrs = $this->attrs->updated($name, $val);
+        return $obj;
     }
 
+    /**
+     * @inheritdoc
+     */
     public function attrs(): RegistryInterface
     {
-        // TODO: Implement attrs() method.
+        return $this->attrs();
     }
 
     /**
@@ -135,7 +148,7 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
      */
     private function blueprinted(): self
     {
-        $obj = new self();
+        $obj = new self($this->attrs);
         $obj->dt = $this->dt;
         $obj->text = $this->text;
         $obj->level = $this->level;

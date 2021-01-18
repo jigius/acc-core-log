@@ -12,13 +12,14 @@ declare(strict_types=1);
 
 namespace Acc\Core\Log;
 
+use Acc\Core\Log\Encode\JsonGzipBase64Encoded;
+use Acc\Core\Registry\RegistryInterface;
+use Acc\Core\Registry\Vanilla\Registry;
 use Acc\Core\SerializableInterface;
 use DateTime;
 use DateTimeInterface;
-use RuntimeException;
 use LogicException;
 use DomainException;
-use Exception;
 use Throwable;
 
 /**
@@ -41,46 +42,35 @@ final class LogExceptionEntry implements LogExceptionEntryInterface, Serializabl
      * @var DateTimeInterface|null
      */
     private ?DateTimeInterface $dt = null;
+    /**
+     * Assigned attributes to the instance
+     * @var Registry
+     */
+    private Registry $attrs;
 
     /**
      * LogEntry constructor.
+     *
+     * @param RegistryInterface|null $attrs
      */
-    public function __construct()
+    public function __construct(?RegistryInterface $attrs = null)
     {
         $this->level = new LogLevel(LogLevelInterface::DEBUG);
+        $this->attrs = $attrs ?? new Registry();
     }
 
     /**
      * @inheritDoc
-     * @return LogExceptionEntryInterface
-     * @throws Exception
-     * @noinspection PhpComposerExtensionStubsInspection
      */
-    public function withException(Throwable $ex): LogExceptionEntryInterface
+    public function withException(Throwable $ex): self
     {
-        $text =
-            json_encode(
-                $this->data($ex),
-                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
-            );
-        if (json_last_error() !== JSON_ERROR_NONE) {
-            throw
-                new DomainException(
-                    "Couldn't encode exception with `json_encode`",
-                    new RuntimeException(json_last_error_msg(), json_last_error())
-                );
-        }
-        if (function_exists('gzencode')) {
-            $text = gzencode($text);
-            if ($text === false) {
-                throw
-                    new DomainException(
-                        "Couldn't encode exception with `gzencode` - `false` is returned"
-                    );
-            }
-        }
         $obj = $this->blueprinted();
-        $obj->text = base64_encode($text);
+        $obj->text =
+            (new JsonGzipBase64Encoded())
+                ->withInput(
+                    $this->data($ex)
+                )
+                    ->encoded();
         $obj->dt = new DateTime();
         return $obj;
     }
@@ -134,11 +124,29 @@ final class LogExceptionEntry implements LogExceptionEntryInterface, Serializabl
     }
 
     /**
+     * @inheritdoc
+     */
+    public function withAttr(string $name, $val): self
+    {
+        $obj = $this->blueprinted();
+        $obj->attrs = $this->attrs->updated($name, $val);
+        return $obj;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function attrs(): RegistryInterface
+    {
+        return $this->attrs();
+    }
+
+    /**
      * @return $this
      */
     private function blueprinted():self
     {
-        $obj = new self();
+        $obj = new self($this->attrs);
         $obj->dt = $this->dt;
         $obj->text = $this->text;
         $obj->level = $this->level;

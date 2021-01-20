@@ -80,19 +80,7 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
         if (!isset($i['dt']) || !isset($i['level']) || !isset($i['text'])) {
             throw new DomainException("invalid data");
         }
-        $line =
-            sprintf(
-                "%s\t%s\t[%u]\t%s\n",
-                $i['dt'],
-                str_pad(
-                    $entity->level()->toString(),
-                    7,
-                    " ",
-                    STR_PAD_LEFT
-                ),
-                getmypid(),
-                $i['text']
-            );
+        $line = $this->p->entry($entity);
         error_clear_last();
         if (@fwrite($this->fd, $line) === false) {
             throw new RuntimeException(

@@ -62,7 +62,7 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
     public function withText(string $text): self
     {
         $obj = $this->blueprinted();
-        $obj->text = $text;
+        $obj->text = str_replace("\n", "\\n", $text);
         $obj->dt = new DateTime();
         return $obj;
     }
@@ -96,7 +96,7 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
         }
         return [
             'level' => $this->level->toInt(),
-            'dt' => $this->dt->format(DateTimeInterface::ATOM),
+            'dt' => $this->dt->format(DateTimeInterface::RFC3339_EXTENDED),
             'text' => $this->text
         ];
     }
@@ -116,7 +116,10 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
             throw new DomainException("invalid data");
         }
         $obj = $this->blueprinted();
-        if (($dt = DateTime::createFromFormat(DateTimeInterface::ATOM, $data['dt'])) === false) {
+        if (
+            ($dt = DateTime::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $data['dt'])) === false &&
+            ($dt = DateTime::createFromFormat(DateTimeInterface::ATOM, $data['dt'])) === false
+        ) {
             throw new LogicException("data is corrupted");
         }
         $obj->dt = $dt;

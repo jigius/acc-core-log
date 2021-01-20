@@ -44,5 +44,5 @@ interface ArrayLogInterface extends LogInterface
      * @param LogLevel $level
      * @return ArrayLogInterface
      */
-    public function withMinLevel(LogLevel $level): ArrayLogInterface;
+    public function withMinLevel(LogLevelInterface $level): ArrayLogInterface;
 }

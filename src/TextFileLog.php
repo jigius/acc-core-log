@@ -40,18 +40,24 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
      * @var LogInterface
      */
     private $original;
+    /**
+     * @var ProcessableEntryInterface
+     */
+    private $p;
 
     /**
      * TextFileLog constructor.
      *
      * @param LogInterface|null $log
+     * @param ProcessableEntryInterface|null $p
      */
-    public function __construct(?LogInterface $log = null)
+    public function __construct(?LogInterface $log = null, ?ProcessableEntryInterface $p = null)
     {
         $this->i = [
             'mode' => "ab"
         ];
         $this->original = $log ?? new NullLog();
+        $this->p = $p ?? new VanillaProcessedEntry();
         $this->fd = null;
         $this->minLevel = new LogLevel(LogLevelInterface::INFO);
     }
@@ -76,7 +82,8 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
         }
         $line =
             sprintf(
-                "%s %s [%u] %s\n", $i['dt'],
+                "%s\t%s\t[%u]\t%s\n",
+                $i['dt'],
                 str_pad(
                     $entity->level()->toString(),
                     7,
@@ -90,9 +97,9 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
         if (@fwrite($this->fd, $line) === false) {
             throw new RuntimeException(
                 sprintf(
-                    "couldn't write into file=`%s`: %s",
+                    "Couldn't write into file=`%s`: %s",
                     $this->i['pathname'],
-                    error_get_last()['message'] ?? "null"
+                    error_get_last()['message'] ?? "unknown error :("
                 )
             );
         }

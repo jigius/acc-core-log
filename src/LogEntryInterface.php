@@ -25,13 +25,21 @@ interface LogEntryInterface extends AttributableInterface
     /**
      * Defines entry's level
      * @param LogLevelInterface $level
-     * @return mixed
+     * @return LogEntryInterface
      */
-    public function withLevel(LogLevelInterface $level);
+    public function withLevel(LogLevelInterface $level): LogEntryInterface;
 
     /**
      * Returns the current level
      * @return LogLevelInterface
      */
     public function level(): LogLevelInterface;
+
+    /**
+     * Adds an attribute
+     * @param string $name
+     * @param mixed $val
+     * @return LogEntryInterface
+     */
+    public function withAttr(string $name, $val): LogEntryInterface;
 }

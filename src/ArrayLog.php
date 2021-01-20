@@ -34,16 +34,22 @@ final class ArrayLog implements ArrayLogInterface, SerializableInterface
      * @var LogInterface
      */
     private $original;
+    /**
+     * @var ProcessableEntryInterface
+     */
+    private $p;
 
     /**
      * ArrayLog constructor.
      *
      * @param LogInterface|null $log
+     * @param ProcessableEntryInterface|null $p
      */
-    public function __construct(?LogInterface $log = null)
+    public function __construct(?LogInterface $log = null, ?ProcessableEntryInterface $p = null)
     {
         $this->ar = [];
         $this->original = $log ?? new NullLog();
+        $this->p = $p ?? new VanillaProcessedEntry();
         $this->minLevel = new LogLevel(LogLevelInterface::INFO);
     }
 

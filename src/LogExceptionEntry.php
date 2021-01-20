@@ -138,7 +138,7 @@ final class LogExceptionEntry implements LogExceptionEntryInterface, Serializabl
      */
     public function attrs(): RegistryInterface
     {
-        return $this->attrs();
+        return $this->attrs;
     }
 
     /**

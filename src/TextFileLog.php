@@ -76,10 +76,6 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
             return $obj->opened()->withEntry($entity);
         }
         $obj->original = $this->original->withEntry($entity);
-        $i = $entity->serialized();
-        if (!isset($i['dt']) || !isset($i['level']) || !isset($i['text'])) {
-            throw new DomainException("invalid data");
-        }
         $line = $this->p->entry($entity);
         error_clear_last();
         if (@fwrite($this->fd, $line) === false) {
@@ -140,7 +136,7 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
      */
     public function created(): self
     {
-        return new self($this->original);
+        return new self($this->original, $this->p);
     }
 
     /**

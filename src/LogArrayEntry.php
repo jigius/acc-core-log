@@ -74,7 +74,7 @@ final class LogArrayEntry implements LogArrayEntryInterface, SerializableInterfa
      */
     public function attrs(): RegistryInterface
     {
-        return $this->attrs();
+        return $this->attrs;
     }
 
     /**

@@ -62,7 +62,16 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
     public function withText(string $text): self
     {
         $obj = $this->blueprinted();
-        $obj->text = str_replace("\n", "\\n", $text);
+        $obj->text =
+            str_replace(
+                "\r",
+                "\\r",
+                str_replace(
+                    "\n",
+                    "\\n",
+                    $text
+                )
+            );
         $obj->dt = new DateTime();
         return $obj;
     }
@@ -143,7 +152,7 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
      */
     public function attrs(): RegistryInterface
     {
-        return $this->attrs();
+        return $this->attrs;
     }
 
     /**

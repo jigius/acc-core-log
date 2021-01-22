@@ -106,19 +106,30 @@ final class ArrayLog implements ArrayLogInterface, SerializableInterface
         if (
             !is_array($data) ||
             !isset($data['minLevel']) || !is_int($data['minLevel']) ||
-            !isset($data['ar']) || !is_array($data['ar']) ||
-            !isset($data['original']['classname']) || !is_string($data['original']['classname']) ||
-            !class_exists($data['original']['classname']) ||
-            !isset($data['original']['state']) || !is_array($data['original']['state'])
+            !isset($data['ar']) || !is_array($data['ar'])
         ) {
             throw new LogicException("type invalid");
         }
-        $log = new $data['original']['classname']();
-        if (!($log instanceof LogInterface)) {
-            throw new LogicException("type invalid");
+        if (isset($data['original'])) {
+            if (
+                !isset($data['original']['classname']) ||
+                !is_string($data['original']['classname']) ||
+                !class_exists($data['original']['classname']) ||
+                !isset($data['original']['state']) ||
+                !is_array($data['original']['state'])
+            ) {
+                throw new LogicException("type invalid");
+            }
+            $log = new $data['original']['classname']();
+            if (!($log instanceof LogInterface)) {
+                throw new LogicException("type invalid");
+            }
+            $log = $log->unserialized($data['original']['state']);
+        } else {
+            $log = new NullLog();
         }
         $obj = $this->blueprinted();
-        $obj->original = $log->unserialized($data['original']['state']);
+        $obj->original = $log;
         $obj->ar =
             array_map(
                 function (array $itm) {

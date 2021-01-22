@@ -16,7 +16,6 @@ namespace Acc\Core\Log;
 use Acc\Core\SerializableInterface;
 use RuntimeException;
 use LogicException;
-use DomainException;
 
 /**
  * Class TextFileLog
@@ -113,19 +112,30 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
         if (
             !is_array($data) ||
             !isset($data['minLevel']) || !is_int($data['minLevel']) ||
-            !isset($data['i']) || !is_array($data['i']) ||
-            !isset($data['original']['classname']) || !is_string($data['original']['classname']) ||
-            !class_exists($data['original']['classname']) ||
-            !isset($data['original']['state']) || !is_array($data['original']['state'])
+            !isset($data['i']) || !is_array($data['i'])
         ) {
             throw new LogicException("type invalid");
         }
-        $log = new $data['original']['classname']();
-        if (!($log instanceof LogInterface)) {
-            throw new LogicException("type invalid");
+        if (isset($data['original'])) {
+            if (
+                !isset($data['original']['classname']) ||
+                !is_string($data['original']['classname']) ||
+                !class_exists($data['original']['classname']) ||
+                !isset($data['original']['state']) ||
+                !is_array($data['original']['state'])
+            ) {
+                throw new LogicException("type invalid");
+            }
+            $log = new $data['original']['classname']();
+            if (!($log instanceof LogInterface)) {
+                throw new LogicException("type invalid");
+            }
+            $log = $log->unserialized($data['original']['state']);
+        } else {
+            $log = new NullLog();
         }
         $obj = $this->blueprinted();
-        $obj->original = $log->unserialized($data['original']['state']);
+        $obj->original = $log;
         $obj->minLevel = new LogLevel($data['minLevel']);
         $obj->i = $data['i'];
         return $obj;

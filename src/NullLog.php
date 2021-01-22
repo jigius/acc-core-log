@@ -21,7 +21,7 @@ use Acc\Core\SerializableInterface;
  *
  * @package Acc\Core\Log
  */
-final class NullLog implements LogInterface, SerializableInterface
+class NullLog implements LogInterface, SerializableInterface
 {
     /**
      * NullLog constructor.
@@ -33,7 +33,7 @@ final class NullLog implements LogInterface, SerializableInterface
     /**
      * @inheritDoc
      */
-    public function withEntry(LogEntryInterface $entity): self
+    final public function withEntry(LogEntryInterface $entity): self
     {
         return $this;
     }
@@ -41,7 +41,7 @@ final class NullLog implements LogInterface, SerializableInterface
     /**
      * @inheritDoc
      */
-    public function serialized(): array
+    final public function serialized(): array
     {
         return [];
     }
@@ -49,7 +49,7 @@ final class NullLog implements LogInterface, SerializableInterface
     /**
      * @inheritDoc
      */
-    public function unserialized(iterable $data): self
+    final public function unserialized(iterable $data): self
     {
         return $this;
     }
@@ -57,7 +57,7 @@ final class NullLog implements LogInterface, SerializableInterface
     /**
      * @inheritDoc
      */
-    public function created(): self
+    final public function created(): self
     {
         return new self();
     }
@@ -65,7 +65,7 @@ final class NullLog implements LogInterface, SerializableInterface
     /**
      * @inheritDoc
      */
-    public function withMinLevel(LogLevelInterface $level): self
+    final public function withMinLevel(LogLevelInterface $level): self
     {
         return $this;
     }

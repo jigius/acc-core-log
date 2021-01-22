@@ -247,10 +247,10 @@ final class TextFileLog implements TextFileLogInterface, SerializableInterface, 
      */
     public function withEmbedded(LogInterface $log): self
     {
+        $obj = $this->blueprinted();
         if ($this->original instanceof LogEmbeddableInterface) {
-            $obj = $this->original->withEmbedded($log);
+            $obj->original = $this->original->withEmbedded($log);
         } else {
-            $obj = $this->blueprinted();
             $obj->original = $log;
         }
         return $obj;

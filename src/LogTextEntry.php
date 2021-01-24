@@ -124,13 +124,13 @@ final class LogTextEntry implements LogTextEntryInterface, SerializableInterface
         ) {
             throw new DomainException("invalid data");
         }
-        $obj = $this->blueprinted();
         if (
             ($dt = DateTime::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $data['dt'])) === false &&
             ($dt = DateTime::createFromFormat(DateTimeInterface::ATOM, $data['dt'])) === false
         ) {
             throw new LogicException("data is corrupted");
         }
+        $obj = $this->blueprinted();
         $obj->dt = $dt;
         $obj->text = $data['text'];
         $obj->level = new LogLevel($data['level']);

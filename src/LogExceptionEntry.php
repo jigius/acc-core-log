@@ -103,7 +103,7 @@ final class LogExceptionEntry implements LogExceptionEntryInterface, Serializabl
         }
         return [
             'level' => $this->level->toInt(),
-            'dt' => $this->dt->format(DateTimeInterface::ATOM),
+            'dt' => $this->dt->format(DateTimeInterface::RFC3339_EXTENDED),
             'text' => $this->text
         ];
     }
@@ -115,6 +115,12 @@ final class LogExceptionEntry implements LogExceptionEntryInterface, Serializabl
     {
         if (!isset($data['dt']) || !isset($data['level']) || !isset($data['text'])) {
             throw new DomainException("invalid data");
+        }
+        if (
+            ($dt = DateTime::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $data['dt'])) === false &&
+            ($dt = DateTime::createFromFormat(DateTimeInterface::ATOM, $data['dt'])) === false
+        ) {
+            throw new LogicException("data is corrupted");
         }
         $obj = $this->blueprinted();
         $obj->dt = DateTime::createFromFormat(DateTimeInterface::ATOM, $data['dt']);

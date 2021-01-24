@@ -122,7 +122,7 @@ final class LogArrayEntry implements LogArrayEntryInterface, SerializableInterfa
         }
         return [
             'level' => $this->level->toInt(),
-            'dt' => $this->dt->format(DateTimeInterface::ATOM),
+            'dt' => $this->dt->format(DateTimeInterface::RFC3339_EXTENDED),
             'text' => $this->text
         ];
     }
@@ -140,8 +140,11 @@ final class LogArrayEntry implements LogArrayEntryInterface, SerializableInterfa
         ) {
             throw new DomainException("invalid data");
         }
-        if (($dt = DateTime::createFromFormat(DateTimeInterface::ATOM, $data['dt'])) === false) {
-            throw new LogicException("data corrupted");
+        if (
+            ($dt = DateTime::createFromFormat(DateTimeInterface::RFC3339_EXTENDED, $data['dt'])) === false &&
+            ($dt = DateTime::createFromFormat(DateTimeInterface::ATOM, $data['dt'])) === false
+        ) {
+            throw new LogicException("data is corrupted");
         }
         $obj = $this->blueprinted();
         $obj->dt = $dt;

@@ -63,6 +63,7 @@ final class JsonGzipBase64Encoded implements EncodableInterface
             throw
                 new RuntimeException(
                     "Couldn't encode exception with `json_encode`",
+                    0,
                     new RuntimeException(json_last_error_msg(), json_last_error())
                 );
         }
@@ -74,7 +75,8 @@ final class JsonGzipBase64Encoded implements EncodableInterface
                 throw
                     new RuntimeException(
                         "Couldn't encode a text with `gzencode` - `false` is returned",
-                        new RuntimeException(error_get_last()['message'] ?? "unknown error :()")
+                        0,
+                        new RuntimeException(error_get_last()['message'] ?? "unknown error :(")
                     );
             }
         }

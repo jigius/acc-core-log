@@ -57,7 +57,7 @@ final class JsonGzipBase64Encoded implements EncodableInterface
         $res =
             json_encode(
                 $this->i->fetch(),
-                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+                JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT | JSON_INVALID_UTF8_SUBSTITUTE
             );
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw

@@ -12,7 +12,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.4.0",
-        "jigius/acc-core": "dev-ref@1",
+        "jigius/acc-core": "^0.1",
         "ext-json": "*"
     },
     "autoload": {
